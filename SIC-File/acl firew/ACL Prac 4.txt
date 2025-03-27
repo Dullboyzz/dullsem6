@@ -1,0 +1,92 @@
+ACL Part 2
+
+Part 2 – Secure Access to Routers 
+ 
+We configure ACL 10 to block all remote access to the Routers and allow remote access 
+only from PC. We type the following commands in all the Routers (Router0, Router1, 
+and Router2). This part is divided in 2 subparts 
+ 
+Set up the SSH protocol 
+ 
+Enter the following commands in CLI mode of Router0 
+Router>enable 
+Router#configure terminal 
+Router(config)#ip domain-name ismail.com 
+Router(config)#hostname Router0 
+Router0(config)# 
+Router0(config)#crypto key generate rsa 
+Router0(config)#line vty 0 4 
+Router0(config-line)#transport input ssh 
+Router0(config-line)#login local 
+Router0(config-line)#exit 
+Router0(config)#username SSHadmin privilege 15 password ismail 
+Router0(config)#exit 
+Router0# 
+ 
+Enter the following commands in CLI mode of Router1 
+Router>enable 
+Router#configure terminal 
+Router(config)#ip domain-name ismail.com 
+Router(config)#hostname Router1 
+Router1(config)# 
+Router1(config)#crypto key generate rsa 
+Router1(config)#line vty 0 4 
+Router1(config-line)#transport input ssh 
+Router1(config-line)#login local 
+Router1(config-line)#exit 
+Router1(config)#username SSHadmin privilege 15 password ismail 
+Router1(config)#exit 
+Router1# 
+ 
+Enter the following commands in CLI mode of Router2 
+Router>enable 
+Router#configure terminal
+Router(config)#ip domain-name ismail.com 
+Router(config)#hostname Router2 
+Router2(config)# 
+Router2(config)#crypto key generate rsa 
+Router2(config)#line vty 0 4 
+Router2(config-line)#transport input ssh 
+Router2(config-line)#login local 
+Router2(config-line)#exit 
+Router2(config)#username SSHadmin privilege 15 password ismail 
+Router2(config)#exit 
+Router2# 
+ 
+Create an ACL 10 to permit remote access to PC only 
+Enter the following commands in CLI mode of all Routers 
+Router>enable 
+Router#configure terminal 
+Router(config)#access-list 10 permit host 192.168.4.2 
+Router(config)#line vty 0 4 
+Router(config-line)#access-class 10 in 
+ 
+Now we verify the remote access from PC using the following and find it to 
+be successful
+
+
+Part 3
+
+Part 3 - Create a Numbered IP ACL 120 on R1 
+We need to perform the following in this part 
+1) Create an IP ACL numbered 120 on R1 using the following rules 
+2) Permit any outside host to access DNS, SMTP, and FTP services on server 
+3) Deny any outside host access to HTTPS services on server 
+4) Permit PC to access Router1 via SSH. (Done in previous part) 
+Enter the following commands in the CLI mode of Router1 
+Router1>enable 
+Router1# 
+Router1#configure terminal 
+Router1(config)#access-list 120 permit udp any host 192.168.1.2 eq domain 
+Router1(config)#access-list 120 permit tcp any host 192.168.1.2 eq smtp 
+Router1(config)#access-list 120 permit tcp any host 192.168.1.2 eq ftp 
+Router1(config)#access-list 120 deny tcp any host 192.168.1.2 eq 443 
+Router1(config)#exit 
+Router1#configure terminal 
+Router1(config)#interface Serial0/1/1 
+Router1(config-if)#ip access-group 120 in 
+ 
+Verify the above entering the following commands in the PC 
+ 
+ 
+Hence, we have applied and verified all the required ACLs

@@ -1,0 +1,101 @@
+ZPF firewall
+
+
+
+Part 2: Configuring SSH on Router 2 
+Type the following commands in the CLI mode of Router2 
+Router>enable 
+Router#configure terminal 
+Router(config)#ip domain-name .com 
+Router(config)#hostname Router2 
+Router2(config)#crypto key generate rsa 
+Router2 (config)#line vty 0 4 
+Router2 (config-line)#transport input ssh 
+Router2 (config-line)#login local 
+Router2 (config-line)#exit 
+Router2 (config)#username ismail privilege 15 password cisco 
+ 
+Now verify ssh from PC0 by typing the following command 
+ssh -l ismail 192.168.3.1
+
+Next we access the web services of the Server using the web browser of 
+PC using the following
+(http://192.168.1.2)
+
+
+
+Part 3: Create the Firewall Zones on Router1 
+Type the following commands in the CLI mode of Router1 
+ 
+Router>enable 
+Router#configure terminal 
+Router(config)#show version (check kar rha hai ki ecurity hai ki nai aur
+(nai hai) )
+ 
+ 
+Router#configure terminal 
+Router (config)#license boot module c1900 technology-package securityk9 
+ACCEPT? [yes/no]: y 
+ 
+Router(config)#exit 
+Router>enable 
+ 
+Router#reload 
+Router>enable
+Router#show version (abh security ho gayi)
+Router# 
+Router#configure terminal 
+Router(config)#zone security in-zone 
+Router(config-sec-zone)#exit 
+ 
+Router(config)#zone security out-zone 
+Router(config-sec-zone)#exit 
+Router(config)#access-list 101 permit ip 
+192.168.4.0 0.0.0.255 any 
+Router(config)#class- 
+map type inspect match-all in-map 
+Router(config- 
+cmap)#match access-group 101 
+Router(config-cmap)#exit 
+Router(config)#policy-map type 
+inspect in-out Router(config- 
+pmap)#class type inspect in-map Router(config-pmap- 
+c)#inspect 
+Router(config-pmap-c)#exit 
+Router(config-pmap)#exit 
+Router(config)# 
+ 
+Router(config)#zone-pair security in-out-zone source in-zone destination out-zone 
+Router(config-sec-zone-pair)#service-policy type inspect in-out 
+Router(config-sec-zone-pair)#exit 
+Router(config)# 
+ 
+Router(config)#interface GigabitEthernet0/0 
+Router(config-if)#zone-member security in-zone 
+Router(config-if)#exit 
+Router(config)# 
+Router(config)#interface Serial0/1/1 
+Router(config-if)#zone-member security out-zone 
+Router(config-if)#exit 
+Router(config)#exit 
+Router#copy running-config startup-config 
+
+
+Part 4: Testing the Firewall Functionality (from in-zone to out-zone) by 
+the following steps 
+Step 1: Pinging SERVER from PC (it will succeed)
+Step 2: Start an SSH session from PC to Router 2 (192.168.3.1) 
+
+
+Step 3: Type the following command in the CLI mode of Router1 
+Router#show policy-map type inspect zone-pair sessions
+
+
+Step 4: We close the SSH connection and open the web browser and access 
+the server address (192.168.1.2) and get the following
+
+
+Part 5: Testing the Firewall Functionality (from out-zone to in-zone) by the 
+following steps 
+Step 1: Ping PC0 from the SERVER (ip 192.168.4.2) (it will result in 
+Failure) 

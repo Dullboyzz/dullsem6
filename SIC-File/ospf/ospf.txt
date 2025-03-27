@@ -1,0 +1,94 @@
+Part 1: Configure OSPF MD5 Authentication 
+ROUTER 1: Type the following command in the CLI mode 
+Router>enable 
+Router#configure terminal 
+Router(config)#router ospf 1 
+Router(config-router)#network 192.168.1.0 0.255.255.255 area 1 
+Router(config-router)#network 10.1.1.0 0.255.255.255 area 1 
+Router(config-router)#exit 
+Router(config)#exit 
+Router# 
+ROUTER 2: Type the following command in the CLI mode 
+Router>enable 
+Router#configure terminal 
+Router(config)#router ospf 1 
+Router(config-router)#network 10.1.1.0 0.255.255.255 area 1 
+Router(config-router)#network 100.2.2.0 0.255.255.255 area 1 
+Router(config-router)#exit 
+Router(config)#exit 
+Router# 
+ROUTER 3: Type the following command in the CLI mode 
+Router>enable 
+Router#configure terminal 
+Router(config)#router ospf 1 
+Router(config-router)#network 192.168.3.0 0.255.255.255 area 1 
+Router(config-router)#network 100.2.2.0 0.255.255.255 area 1 
+Router(config-router)#exit 
+Router(config)#exit 
+Router# 
+Now we verify the connectivity by using the following
+
+MD5 Authentication 
+ROUTER 1: Type the following command in the CLI mode 
+Router>enable 
+Router# 
+Router#configure terminal 
+Router(config)#interface Serial0/0/0 
+Router(config-if)#ip ospf authentication message-digest 
+Router(config-if)#ip ospf message-digest-key 1 md5 smile 
+Router(config-if)#exit 
+Router(config)#exit 
+ROUTER 2: Type the following command in the CLI mode 
+Router>enable 
+Router# 
+Router#configure terminal 
+Router(config)#interface Serial0/0/0 
+Router(config-if)#ip ospf authentication message-digest 
+Router(config-if)#ip ospf message-digest-key 1 md5 smile 
+Router(config-if)#exit 
+Router(config)#exit 
+Verify the MD5 Authentication using the following command in the 
+CLI mode of Router1 
+Router#show ip ospf interface gigabitEthernet 0/1
+
+Now Go to CLI Mode of Router1 and type the following commands on both the 
+Routers 
+Router#enable 
+Router#configure terminal 
+Enter configuration commands, one per line. End with CNTL/Z. 
+Router(config)#ntp server 192.168.1.5 
+Router(config)#ntp update-calendar 
+Router(config)#exit 
+Router# 
+To verify the Output we use the following command 
+Router#show clock 
+18:12:43.760 UTC Fri Jan 14 2022 
+Router# 
+1
+
+Now Go to CLI Mode of any Router and type the following commands in all the 
+Routers. 
+Router# 
+Router#configure terminal 
+Router(config)#logging 192.168.1.6 
+Router(config)#exit 
+Router#
+
+ Now Go to CLI Mode of Router3 and type the following commands. 
+Router#configure terminal 
+Router(config)#ip domain-name ismail.com 
+Router(config)#hostname R3 
+R3(config)# 
+R3(config)#crypto key generate rsa 
+The name for the keys will be: R1.ismail.com 
+Choose the size of the key modulus in the range of 360 to 2048 for your 
+General Purpose Keys. Choosing a key modulus greater than 512 may take 
+a few minutes. 
+R3(config)#line vty 0 4 
+R3(config-line)#transport input ssh 
+R3(config-line)#login local 
+R3(config-line)#exit 
+R3(config)#username ismail privilege 15 password cisco 
+R3(config)# 
+Output: Go to cmd of PC-C and type the command 
+ssh –l ismail 192.168.3.1 and type the password cisco
